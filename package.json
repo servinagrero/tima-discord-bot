@@ -3,10 +3,14 @@
   "packageManager": "yarn@3.3.0",
   "dependencies": {
     "discord.js": "^14.6.0",
-    "dotenv": "^16.0.3"
+    "dotenv": "^16.0.3",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7",
+    "tslib": "^2.4.1"
   },
   "scripts": {
-    "start": "ts-node src/bot.ts"
+    "start": "ts-node src/index.ts",
+    "dev": "ts-node-dev --respawn --transpile-only --poll src/index.ts"
   },
   "devDependencies": {
     "@types/node": "^18.11.9",
