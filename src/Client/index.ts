@@ -1,23 +1,20 @@
-import { Listener } from "../Interfaces";
+import { Listener, Command, Config } from "../Interfaces";
 
-import {
-  Client,
-  Collection,
-  ChannelType,
-  TextChannel,
-  PermissionsBitField,
-  Permissions,
-} from "discord.js";
+import { Client, Collection } from "discord.js";
 
-import "dotenv/config";
+import configFile from "../config.json";
 
 import path from "path";
 
 import fs from "fs";
 
 export default class Bot extends Client {
-  public async init(token: string) {
-    this.login(token)
+  public listeners_map: Collection<string, Listener> = new Collection();
+  public commands_map: Collection<string, Command> = new Collection();
+  public config: Config = configFile;
+
+  public async init() {
+    this.login(this.config.token)
       .then(() => {
         if (!this.user || !this.application) {
           process.exit(1);
@@ -39,7 +36,26 @@ export default class Bot extends Client {
             try {
               const callback = await import(`../Listeners/${listener_file}`);
               callback.default(this);
+              this.listeners_map.set(listener_file, callback.default);
               console.log(`*** Registered listener ${listener_file}`);
+            } catch (err) {
+              console.error(err);
+            }
+          });
+      }
+    );
+
+    fs.readdir(
+      path.join(__dirname, "../Commands"),
+      (err, commands: string[]) => {
+        if (err) throw new Error(err.message);
+        commands
+          .filter((commands: string) => commands.endsWith(".ts"))
+          .forEach(async (command_file: string) => {
+            try {
+              const { command } = await import(`../Commands/${command_file}`);
+              this.commands_map.set(command.data.name, command);
+              console.log(`*** Registered command ${command_file}`);
             } catch (err) {
               console.error(err);
             }

@@ -1,8 +1,10 @@
-import { Client, Events, ChannelType, TextChannel } from "discord.js";
+import Bot from "../Client";
 
-export default (client: Client): void => {
+import { Events, ChannelType, TextChannel } from "discord.js";
+
+export default (client: Bot): void => {
   client.once(Events.GuildMemberAdd, async (member) => {
-    client.guilds.fetch(process.env.GUILD_ID!).then(async (guild) => {
+    client.guilds.fetch(client.config.guild_id).then(async (guild) => {
       const { ownerId } = guild;
 
       const msg: Array<string> = [

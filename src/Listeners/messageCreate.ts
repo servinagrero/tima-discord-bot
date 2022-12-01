@@ -1,11 +1,11 @@
-import { Client, Events } from "discord.js";
+import Bot from "../Client";
+import { Events } from "discord.js";
 
-export default (client: Client): void => {
-  client.once(Events.MessageCreate, async (message) => {
-    const { channelId } = message;
+export default (client: Bot): void => {
+  client.on(Events.MessageCreate, async (message) => {
     const user = message.author.username;
-    if (user !== client.user!.username) {
-      console.log(`Message from ${user}`);
+    if (client.user && user !== client.user.username) {
+      console.log(`Message from ${user}: ${message.content}`);
     }
   });
 };
